@@ -11,33 +11,23 @@ phases:
 
   pre_build:
     commands:
-      - echo "Configuring Maven for GitHub Packages"
-      - mkdir -p ~/.m2
-      - |
-        cat <<EOF > ~/.m2/settings.xml
-        <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0">
-          <servers>
-            <server>
-              <id>github</id>
-              <username>virinchisrao</username>
-              <password>${GITHUB_TOKEN}</password>
-            </server>
-          </servers>
-        </settings>
-        EOF
+      - echo Logging in to AWS CodeArtifact...
+      - aws --version
+      - CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token --domain virinchisrao --domain-owner 636143319959 --region eu-north-1 --query authorizationToken --output text)
+      - export CODEARTIFACT_AUTH_TOKEN
+      - echo "Token fetched successfully"
 
   build:
     commands:
       - echo Build started on `date`
-      - mvn clean install
+      - mvn -v
+      - mvn clean install -s settings.xml -e
 
   post_build:
     commands:
       - echo Build completed on `date`
-      - echo Packaging artifacts...
-      - mvn package
+      - mvn package -s settings.xml
 
 artifacts:
   files:
     - target/*.war
-  discard-paths: no
