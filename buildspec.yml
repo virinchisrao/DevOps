@@ -8,11 +8,6 @@ phases:
   install:
     runtime-versions:
       java: corretto8
-  pre_build:
-    commands:
-      - echo Logging in to AWS CodeArtifact...
-      - CODEARTIFACT_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain virinchisrao --domain-owner <636143319959> --region eu-north-1 --query authorizationToken --output text`
-      - export CODEARTIFACT_AUTH_TOKEN
   build:
     commands:
       - echo Build started on `date`
